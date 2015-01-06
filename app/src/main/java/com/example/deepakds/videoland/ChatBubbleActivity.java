@@ -2,6 +2,7 @@ package com.example.deepakds.videoland;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.database.DataSetObserver;
 import android.net.Uri;
@@ -9,9 +10,12 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnKeyListener;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AbsListView;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ListView;
@@ -32,7 +36,7 @@ import java.util.HashMap;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
-public class ChatBubbleActivity extends Activity {
+public class ChatBubbleActivity extends Activity implements View.OnTouchListener{
     private static final String TAG = "ChatActivity";
 
     ChatArrayAdapter chatArrayAdapter;
@@ -42,6 +46,7 @@ public class ChatBubbleActivity extends Activity {
     ImageButton playImageButton, pauseImageButton;
     String videoUrl;
     VideoView videoView;
+    Button urlbutton, chatbutton;
 
     Intent intent;
     private boolean side = false;
@@ -58,9 +63,11 @@ public class ChatBubbleActivity extends Activity {
         videoView = (VideoView)findViewById(R.id.youtubevideoview);
         chatText = (EditText) findViewById(R.id.msgbox);
         urltxt = (EditText)findViewById(R.id.videourl);
-        playImageButton = (ImageButton)findViewById(R.id.playbutton);
-        pauseImageButton = (ImageButton)findViewById(R.id.pausebutton);
+//        playImageButton = (ImageButton)findViewById(R.id.playbutton);
+//        pauseImageButton = (ImageButton)findViewById(R.id.pausebutton);
         listView = (ListView) findViewById(R.id.listView1);
+        urlbutton = (Button) findViewById(R.id.urlbtn);
+        chatbutton = (Button)findViewById(R.id.chatbtn);
 
         chatArrayAdapter = new ChatArrayAdapter(getApplicationContext(), R.layout.activity_chat_singlemessage);
         listView.setAdapter(chatArrayAdapter);
@@ -70,6 +77,7 @@ public class ChatBubbleActivity extends Activity {
         chatText.setOnKeyListener(new OnKeyListener() {
             public boolean onKey(View v, int keyCode, KeyEvent event) {
                 if ((event.getAction() == KeyEvent.ACTION_DOWN) && (keyCode == KeyEvent.KEYCODE_ENTER)) {
+                    closeKeyboard(ChatBubbleActivity.this);
                     return sendChatMessage();
                 }
                 return false;
@@ -83,6 +91,7 @@ public class ChatBubbleActivity extends Activity {
 
                 if (keyCode == event.KEYCODE_ENTER) {
                     new YourAsyncTask().execute();
+                    closeKeyboard(ChatBubbleActivity.this);
                 }
 
                 if(keyCode == event.KEYCODE_BACK){
@@ -92,49 +101,75 @@ public class ChatBubbleActivity extends Activity {
             }
         });
 
-        playImageButton.setOnClickListener(new View.OnClickListener() {
-
+        urlbutton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                videoView.setVideoURI(video);
-//                videoView.requestFocus();
-
-                if(count == 0){
-                    new YourAsyncTask().execute();
-                    count++;
-                }
-
-//                pDialog.show();
-                if(videoView.isPlaying() == false){
-//                    videoView.resume();
-                    System.out.println(videoView);
-                    videoView.seekTo(stopPosition);
-                    videoView.start();
-                }
-
-
-//                videoView.start();
-
-//                if(videoView.isPlaying())
-//                    pDialog.dismiss();
+                urltxt.setVisibility(View.VISIBLE);
+                urlbutton.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        urlbutton.setVisibility(View.INVISIBLE);
+                    }
+                },1);
             }
         });
 
-        pauseImageButton.setOnClickListener(new View.OnClickListener() {
+        chatbutton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-                stopPosition = videoView.getCurrentPosition();
-                videoView.pause();
-
-//                if(videoView.isPlaying()){
-//                    videoView.pause();
-//                }
-//                else{
-//                    Toast.makeText(getApplicationContext(), "Video is not playing!", Toast.LENGTH_SHORT).show();
-//                }
+                chatText.setVisibility(View.VISIBLE);
+                chatbutton.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        chatbutton.setVisibility(View.INVISIBLE);
+                    }
+                },1);
             }
         });
+
+//        playImageButton.setOnClickListener(new View.OnClickListener() {
+//
+//            @Override
+//            public void onClick(View v) {
+////                videoView.setVideoURI(video);
+////                videoView.requestFocus();
+//
+//                if(count == 0){
+//                    new YourAsyncTask().execute();
+//                    count++;
+//                }
+//
+////                pDialog.show();
+//                if(videoView.isPlaying() == false){
+////                    videoView.resume();
+//                    System.out.println(videoView);
+//                    videoView.seekTo(stopPosition);
+//                    videoView.start();
+//                }
+//
+//
+////                videoView.start();
+//
+////                if(videoView.isPlaying())
+////                    pDialog.dismiss();
+//            }
+//        });
+
+//        pauseImageButton.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//
+//                stopPosition = videoView.getCurrentPosition();
+//                videoView.pause();
+//
+////                if(videoView.isPlaying()){
+////                    videoView.pause();
+////                }
+////                else{
+////                    Toast.makeText(getApplicationContext(), "Video is not playing!", Toast.LENGTH_SHORT).show();
+////                }
+//            }
+//        });
 
         listView.setTranscriptMode(AbsListView.TRANSCRIPT_MODE_ALWAYS_SCROLL);
         listView.setAdapter(chatArrayAdapter);
@@ -149,11 +184,30 @@ public class ChatBubbleActivity extends Activity {
         });
     }
 
+
+    public static void closeKeyboard(Context mContext) {
+        try {
+            InputMethodManager inputMethodManager = (InputMethodManager) mContext
+                    .getSystemService(Activity.INPUT_METHOD_SERVICE);
+            inputMethodManager.hideSoftInputFromWindow(((Activity) mContext)
+                    .getCurrentFocus().getWindowToken(), 0);
+        } catch (Exception e) {
+
+        }
+    }
+
     private boolean sendChatMessage() {
         chatArrayAdapter.add(new ChatMessage(side, chatText.getText().toString()));
         chatText.setText("");
         side = !side;
         return true;
+    }
+
+    @Override
+    public boolean onTouch(View v, MotionEvent event) {
+//        if(event == even)
+
+        return false;
     }
 
     private class YourAsyncTask extends AsyncTask<Void, Void, Void>
