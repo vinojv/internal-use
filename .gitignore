@@ -3,4 +3,8 @@
 /.idea/workspace.xml
 /.idea/libraries
 .DS_Store
+/app/build
 /build
+.idea
+/.idea/modules.xml
+/.idea/gradle.xml
