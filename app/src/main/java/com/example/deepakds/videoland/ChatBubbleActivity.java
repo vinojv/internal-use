@@ -58,8 +58,8 @@ public class ChatBubbleActivity extends Activity {
         videoView = (VideoView)findViewById(R.id.youtubevideoview);
         chatText = (EditText) findViewById(R.id.msgbox);
         urltxt = (EditText)findViewById(R.id.videourl);
-        playImageButton = (ImageButton)findViewById(R.id.playbutton);
-        pauseImageButton = (ImageButton)findViewById(R.id.pausebutton);
+//        playImageButton = (ImageButton)findViewById(R.id.playbutton);
+//        pauseImageButton = (ImageButton)findViewById(R.id.pausebutton);
         listView = (ListView) findViewById(R.id.listView1);
 
         chatArrayAdapter = new ChatArrayAdapter(getApplicationContext(), R.layout.activity_chat_singlemessage);
@@ -92,49 +92,49 @@ public class ChatBubbleActivity extends Activity {
             }
         });
 
-        playImageButton.setOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-//                videoView.setVideoURI(video);
-//                videoView.requestFocus();
-
-                if(count == 0){
-                    new YourAsyncTask().execute();
-                    count++;
-                }
-
-//                pDialog.show();
-                if(videoView.isPlaying() == false){
-//                    videoView.resume();
-                    System.out.println(videoView);
-                    videoView.seekTo(stopPosition);
-                    videoView.start();
-                }
-
-
-//                videoView.start();
-
-//                if(videoView.isPlaying())
-//                    pDialog.dismiss();
-            }
-        });
-
-        pauseImageButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                stopPosition = videoView.getCurrentPosition();
-                videoView.pause();
-
-//                if(videoView.isPlaying()){
-//                    videoView.pause();
+//        playImageButton.setOnClickListener(new View.OnClickListener() {
+//
+//            @Override
+//            public void onClick(View v) {
+////                videoView.setVideoURI(video);
+////                videoView.requestFocus();
+//
+//                if(count == 0){
+//                    new YourAsyncTask().execute();
+//                    count++;
 //                }
-//                else{
-//                    Toast.makeText(getApplicationContext(), "Video is not playing!", Toast.LENGTH_SHORT).show();
+//
+////                pDialog.show();
+//                if(videoView.isPlaying() == false){
+////                    videoView.resume();
+//                    System.out.println(videoView);
+//                    videoView.seekTo(stopPosition);
+//                    videoView.start();
 //                }
-            }
-        });
+//
+//
+////                videoView.start();
+//
+////                if(videoView.isPlaying())
+////                    pDialog.dismiss();
+//            }
+//        });
+
+//        pauseImageButton.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//
+//                stopPosition = videoView.getCurrentPosition();
+//                videoView.pause();
+//
+////                if(videoView.isPlaying()){
+////                    videoView.pause();
+////                }
+////                else{
+////                    Toast.makeText(getApplicationContext(), "Video is not playing!", Toast.LENGTH_SHORT).show();
+////                }
+//            }
+//        });
 
         listView.setTranscriptMode(AbsListView.TRANSCRIPT_MODE_ALWAYS_SCROLL);
         listView.setAdapter(chatArrayAdapter);
